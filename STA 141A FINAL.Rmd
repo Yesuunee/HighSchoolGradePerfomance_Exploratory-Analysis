@@ -1,0 +1,151 @@
+---
+title: "STA 141  APPENDIX"
+author: "Yesuunee" 
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+author: "Yesuunee"
+
+```{r}
+
+library(readr)
+student_por <- read_csv('/Users/Sia/Documents/UC Davis Quarters/Spring 2020/STA 141A/student-por.csv')
+d2=data.frame(student_por)
+
+```
+
+
+Does student alcohol consumption affect grades, number of past class failures, and absences?
+
+
+#Normality test 
+```{r}
+
+linmodel= lm(d2$Dalc~d2$famsize+d2$Pstatus+ d2$famrel,data=d2)
+plot(linmodel)
+```
+
+#Model Selection 
+```{r}
+library(MASS)
+
+#Family background selection 
+
+# Fit the full model Weekday Alcohol consumption
+full.modelD <- lm(d2$Dalc ~ d2$address + d2$famsize+ d2$Pstatus+ d2$Medu+ d2$Fedu+ d2$Fedu+ d2$Mjob+ d2$Fjob+ d2$famsup++ d2$famrel , data = d2)
+#Fit the null model 
+null.modelD <- lm(d2$Dalc~1, data=d2)
+# Stepwise regression model
+step.modelD <- stepAIC(full.modelD, direction = "both", 
+                      trace = FALSE)
+
+ForwardAICD=step(null.modelD, scope= list(lower=null.modelD, upper=full.modelD), direction= "forward" ) 
+BAckwardAICD=step(full.modelD, scope=list(lower=null.modelD, upper = full.modelD), direction = "backward")
+
+summary(ForwardAICD)
+summary(BAckwardAICD)
+
+
+
+```
+
+
+###Corrolation Between alchohol consumtion(weekday & weekend) and grades.  
+
+###Dalc 
+```{r}
+grade.x <-cor.test(d2$G3, d2$Dalc,  method = "spearman")
+grade.x
+
+```
+A weak downhill relationship 
+###FIX 
+```{r}
+bx1=boxplot(d2$G3 ~ d2$Dalc, ylab = "Grade", xlab = " Weekday Alcohol Consumption in Language class")
+
+```
+Those who consume amount of alchohol 2 has lower grade. Those who consume 1 has significantly better score than those who consume alcohol around 3,4 and 5. 
+
+###Corrolation Between alchohol consumption(weekday & weekend) and classs failures. 
+
+```{r}
+fail.x <-cor.test(d2$failures,  d2$Dalc,  method = "spearman")
+fail.x
+```
+There are no significant difference in class failures. 
+
+
+```{r}
+bx3=boxplot(d2$failures ~ d2$Dalc, ylab = "Number of Class Failures", xlab = "Weekday Alcohol Consumption in Portuguese class")
+
+```
+
+
+###Corrolation Between alchohol consumption(weekday & weekend) and absences. 
+
+
+```{r}
+abs.x <-cor.test(d2$absences,  d2$Dalc,  method = "spearman")
+abs.x
+```
+
+
+```{r}
+bx5=boxplot(d2$absences ~ d2$Dalc,  ylab = "Number of Absences", xlab = "Weekday Alcohol Consumption in Portuguese class")
+```
+
+The absence is high for those whose alchohol consumptions are 3, 5. (4??)
+For math class the absence increases as the alcohol consumption increase. 
+
+
+###Walc 
+
+###Corrolation Between alchohol consumption(weekday & weekend) and grades. 
+```{r}
+grade.wx <-cor.test(d2$G3, d2$Walc,  method = "spearman")
+grade.wx
+
+```
+A weak downhill relationship 
+
+```{r}
+bx7=boxplot(d2$G3 ~ d2$Walc, ylab = "Grade", xlab = "Weekend Alcohol Consumption in Language class")
+```
+Those who consume amount of alchohol 2 has lower grade. Those who consume 1 has significantly better score than those who consume alcohol around 3,4 and 5. 
+
+###Corrolation Between alchohol consumption(weekday & weekend) and classs failures. 
+
+```{r}
+fail.wx <-cor.test(d2$failures,  d2$Walc,  method = "spearman")
+fail.wx
+```
+
+
+```{r}
+bx9=boxplot(d2$failures ~ d2$Walc, ylab = "Number of Class Failures", xlab = "Weekend Alcohol Consumption in Language class")
+```
+
+
+###Corrolation Between alchohol consumption(weekday & weekend) and absences. 
+
+
+```{r}
+abs.wx <-cor.test(d2$absences,  d2$Walc,  method = "spearman")
+abs.wx
+```
+
+
+```{r}
+bx11=boxplot(d2$absences ~ d2$Walc, ylab = "Number of Class Absences", xlab = "Weekend Alcohol Consumption in Language class")
+```
+
+
+### R Appendix
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
+
+
+
+
